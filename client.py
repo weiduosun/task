@@ -25,16 +25,16 @@ collection = []
 # Given: the message
 # Return: the encoded bytes
 def encode_data(d):
-    num_of_answers = d[0]
-    result = [num_of_answers.to_bytes(2, byteorder='big')]
+    num_of_messages = d[0]
+    result = [num_of_messages.to_bytes(2, byteorder='big')]
     k = 1
-    while k < 2 * num_of_answers + 1:
+    while k < 2 * num_of_messages + 1:
         result.append(d[k].to_bytes(2, byteorder='big'))
         k += 1
-        expression = ''
+        message = ''
         for j in range(0, len(d[k])):
-            expression += str(d[k][j])
-        result.append(expression.encode())
+            message += str(d[k][j])
+        result.append(message.encode())
         k += 1
 
     return result
@@ -55,10 +55,10 @@ def send_bytes_to_server(s, temp):
 def decode_data(d):
     arr = []
     t = struct.unpack('bb', d[0:2])
-    num_of_answers = int.from_bytes(t, byteorder='big')
-    arr.append(num_of_answers)
+    num_of_messages = int.from_bytes(t, byteorder='big')
+    arr.append(num_of_messages)
     index = 2
-    for i in range(0, num_of_answers):
+    for i in range(0, num_of_messages):
         len_of_string = int.from_bytes(d[index:index + 2], byteorder='big')
         arr.append(len_of_string)
         index += 2
@@ -72,11 +72,11 @@ def decode_data(d):
 # Return: true if the client can stop receiving bytes
 def can_stop(d):
     t = struct.unpack('bb', d[0:2])
-    num_of_answers = int.from_bytes(t, byteorder='big')
+    num_of_messages = int.from_bytes(t, byteorder='big')
     index = 2
     p = 2
     n = len(d)
-    for i in range(0, num_of_answers):
+    for i in range(0, num_of_messages):
         p += 2
         if n < p:
             return False
